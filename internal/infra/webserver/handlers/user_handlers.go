@@ -37,6 +37,7 @@ func NewUserHandler(userDB database.UserInterface) *UserHandler {
 // @Failure      500  {object}  Error
 // @Router       /users/generate_token [post]
 func (h *UserHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
+	// It uses the "jwtauth" object (includes the secret) that was attached to the request through a middleware
 	jwt := r.Context().Value("jwt").(*jwtauth.JWTAuth)
 	jwtExpiresIn := r.Context().Value("JwtExpiresIn").(int)
 	var user dto.GetJWTInput
@@ -56,6 +57,7 @@ func (h *UserHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	// Creates the bearer token using the "jwtauth" object
 	_, tokenString, _ := jwt.Encode(map[string]interface{}{
 		"sub": u.ID.String(),
 		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),

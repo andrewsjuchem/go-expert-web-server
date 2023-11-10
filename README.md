@@ -44,3 +44,12 @@ User objects flow
 1. User handler receives the request and converts the input JSON into a User DTO.
 2. User DTO values are used to create an user through the User Entity.
 3. The User Entity object is sent to the User DB interface to create the user in the database.
+
+Authentication
+- The jwt secret in a config (.env file).
+- A "jwtauth" object (with the secret) is added to each request through a middleware.
+- When the endpoint to get/generate the token is called, it uses this "jwtauth" object from the request to create the token and return the token to the user.
+- The user will use this token and send to subsequent request as a bearer token.
+- In every other request, the bearer token gets validated through Chi's middlewares (jwtauth.Verifier + jwtauth.Authenticator).
+- Since this app both generates the authentication token and uses it to authenticate the user, the secret is only in one place (in the config file).
+- If the "GetJWT" function was in another app, that other app would need to have the same secret in order to create a valid token.
